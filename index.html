@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mainframe Breach</title>
+    <link rel="stylesheet" href="./css/style.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="masthead">
+        <p class="boot-label">SINGLE-PLAYER GRID PUZZLE RACER</p>
+        <h1>MAINFRAME BREACH</h1>
+        <p class="boot-copy">Plan the route. Harvest the data. Beat the alarm.</p>
+      </header>
+
+      <section class="game-shell" aria-label="Game viewport">
+        <div class="status-bar" aria-live="polite">
+          <span id="levelValue">LEVEL: 1</span>
+          <span id="dataValue">DATA: 0/0</span>
+          <span id="timeValue">TIME: 01:00</span>
+        </div>
+
+        <div class="screen-frame">
+          <canvas
+            id="gameCanvas"
+            width="1000"
+            height="600"
+            aria-label="Main game canvas"
+          ></canvas>
+        </div>
+
+        <div class="message-panel" aria-live="polite">
+          <p id="stateValue">&gt; SYSTEM READY</p>
+          <p id="subMessageValue">Canvas engine online. Awaiting operator input.</p>
+        </div>
+      </section>
+
+      <footer id="footerCopy" class="footer-copy">ARROWS NAVIGATE | ENTER SELECT</footer>
+    </main>
+
+    <noscript>
+      <p class="noscript-warning">JavaScript is required to run Mainframe Breach.</p>
+    </noscript>
+
+    <script type="module" src="./js/game.js"></script>
+  </body>
+</html>
