@@ -55,6 +55,20 @@ const RUN_COMPLETE_OPTIONS = [
   { label: "MAIN MENU", action: "menu" },
 ];
 
+const DESKTOP_NOTICE_LINES = [
+  "This is a desktop game.",
+  "Play on desktop for a better experience.",
+  "Use keyboard to control.",
+  "",
+  "MOVE       Arrow Keys / WASD",
+  "NAVIGATE   Arrow Up / Down or W / S",
+  "SELECT     Enter / Space",
+  "BLINK      Space after picking up a blink module",
+  "PAUSE      P",
+  "RESTART    R",
+  "BACK/MENU  Escape",
+];
+
 const PREVENT_DEFAULT_KEYS = new Set([
   "ArrowUp",
   "ArrowDown",
@@ -398,7 +412,7 @@ export class Game {
     this.overlaySelection = 0;
     this.setBanner(
       "> DESKTOP RECOMMENDED",
-      "This is a desktop game. Play on desktop for a better experience.",
+      "This is a desktop game. Play on desktop for a better experience. Use keyboard to control.",
       "warn"
     );
     this.syncUI();
@@ -787,7 +801,7 @@ export class Game {
 
   createFooterText() {
     if (this.state === GAME_STATES.DESKTOP_NOTICE) {
-      return "ENTER TO CONTINUE";
+      return "ENTER / SPACE / ESC TO CONTINUE";
     }
 
     if (this.state === GAME_STATES.MENU) {
@@ -863,13 +877,9 @@ export class Game {
     if (this.state === GAME_STATES.DESKTOP_NOTICE) {
       this.renderPanel({
         title: "DESKTOP RECOMMENDED",
-        subtitle: "first-time notice",
-        lines: [
-          "This is a desktop game.",
-          "Play on desktop for a better experience.",
-        ],
-        linesAlign: "center",
-        hint: "ENTER TO CONTINUE",
+        subtitle: "keyboard control notice",
+        lines: DESKTOP_NOTICE_LINES,
+        hint: "ENTER / SPACE / ESC TO CONTINUE",
         tone: "warn",
       });
       return;
