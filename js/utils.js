@@ -1,5 +1,6 @@
 export const GAME_STATES = Object.freeze({
   LOADING: "loading",
+  DESKTOP_NOTICE: "desktop-notice",
   MENU: "menu",
   CONTROLS: "controls",
   HIGH_SCORES: "high-scores",

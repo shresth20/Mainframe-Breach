@@ -8,7 +8,13 @@ import {
   loadLevelConfigs,
 } from "./level.js";
 import { Player } from "./player.js";
-import { getBestScore, loadHighScores, recordHighScore } from "./storage.js";
+import {
+  getBestScore,
+  hasSeenDesktopNotice,
+  loadHighScores,
+  markDesktopNoticeSeen,
+  recordHighScore,
+} from "./storage.js";
 import { UI } from "./ui.js";
 import {
   GAME_STATES,
@@ -94,7 +100,7 @@ export class Game {
 
     this.bindEvents();
     this.loadBackdropLevel(0);
-    this.showMainMenu();
+    this.showInitialScreen();
   }
 
   bindEvents() {
@@ -115,6 +121,9 @@ export class Game {
     await this.audio.arm();
 
     switch (this.state) {
+      case GAME_STATES.DESKTOP_NOTICE:
+        this.handleDesktopNoticeInput(event.key);
+        break;
       case GAME_STATES.MENU:
         this.handleMenuInput(event.key);
         break;
@@ -137,6 +146,12 @@ export class Game {
         break;
     }
   };
+
+  handleDesktopNoticeInput(key) {
+    if (key === "Enter" || key === " " || key === "Escape" || key === "Backspace") {
+      this.dismissDesktopNotice();
+    }
+  }
 
   handleMenuInput(key) {
     if (key === "ArrowUp" || key === "w" || key === "W") {
@@ -366,6 +381,32 @@ export class Game {
 
   returnToMenu() {
     this.loadBackdropLevel(0);
+    this.showMainMenu();
+  }
+
+  showInitialScreen() {
+    if (hasSeenDesktopNotice()) {
+      this.showMainMenu();
+      return;
+    }
+
+    this.showDesktopNotice();
+  }
+
+  showDesktopNotice() {
+    this.state = GAME_STATES.DESKTOP_NOTICE;
+    this.overlaySelection = 0;
+    this.setBanner(
+      "> DESKTOP RECOMMENDED",
+      "This is a desktop game. Play on desktop for a better experience.",
+      "warn"
+    );
+    this.syncUI();
+  }
+
+  dismissDesktopNotice() {
+    markDesktopNoticeSeen();
+    this.audio.play("move");
     this.showMainMenu();
   }
 
@@ -641,6 +682,7 @@ export class Game {
 
   update(deltaTime) {
     if (
+      this.state === GAME_STATES.DESKTOP_NOTICE ||
       this.state === GAME_STATES.MENU ||
       this.state === GAME_STATES.CONTROLS ||
       this.state === GAME_STATES.HIGH_SCORES
@@ -704,6 +746,14 @@ export class Game {
   }
 
   createHudText() {
+    if (this.state === GAME_STATES.DESKTOP_NOTICE) {
+      return {
+        levelText: "LEVEL: NOTICE",
+        dataText: "DATA: DESKTOP",
+        timeText: "TIME: READY",
+      };
+    }
+
     if (this.state === GAME_STATES.MENU) {
       return {
         levelText: "LEVEL: MENU",
@@ -736,6 +786,10 @@ export class Game {
   }
 
   createFooterText() {
+    if (this.state === GAME_STATES.DESKTOP_NOTICE) {
+      return "ENTER TO CONTINUE";
+    }
+
     if (this.state === GAME_STATES.MENU) {
       return "ARROWS NAVIGATE | ENTER SELECT";
     }
@@ -801,6 +855,21 @@ export class Game {
           `Time remaining: ${formatTime(this.timeLeft)}`,
         ],
         hint: "P / ENTER / SPACE TO RESUME | ESC TO RETURN TO MENU",
+        tone: "warn",
+      });
+      return;
+    }
+
+    if (this.state === GAME_STATES.DESKTOP_NOTICE) {
+      this.renderPanel({
+        title: "DESKTOP RECOMMENDED",
+        subtitle: "first-time notice",
+        lines: [
+          "This is a desktop game.",
+          "Play on desktop for a better experience.",
+        ],
+        linesAlign: "center",
+        hint: "ENTER TO CONTINUE",
         tone: "warn",
       });
       return;

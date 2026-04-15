@@ -1,4 +1,5 @@
 const HIGH_SCORE_KEY = "mainframe-breach-highscores-v1";
+const DESKTOP_NOTICE_KEY = "mainframe-breach-desktop-notice-v1";
 
 function canUseStorage() {
   return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
@@ -50,4 +51,31 @@ export function recordHighScore(entry) {
 
 export function getBestScore(scores = loadHighScores()) {
   return scores[0]?.score ?? 0;
+}
+
+export function hasSeenDesktopNotice() {
+  if (!canUseStorage()) {
+    return false;
+  }
+
+  try {
+    return window.localStorage.getItem(DESKTOP_NOTICE_KEY) === "seen";
+  } catch (error) {
+    console.warn("Unable to read desktop notice state.", error);
+    return false;
+  }
+}
+
+export function markDesktopNoticeSeen() {
+  if (!canUseStorage()) {
+    return false;
+  }
+
+  try {
+    window.localStorage.setItem(DESKTOP_NOTICE_KEY, "seen");
+    return true;
+  } catch (error) {
+    console.warn("Unable to save desktop notice state.", error);
+    return false;
+  }
 }
